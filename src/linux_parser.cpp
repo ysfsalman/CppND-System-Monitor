@@ -10,6 +10,7 @@ using std::string;
 using std::to_string;
 using std::vector;
 
+
 // DONE: An example of how to read data from the filesystem
 string LinuxParser::OperatingSystem() {
   string line;
@@ -35,13 +36,13 @@ string LinuxParser::OperatingSystem() {
 
 // DONE: An example of how to read data from the filesystem
 string LinuxParser::Kernel() {
-  string os, kernel;
+  string os, version, kernel;
   string line;
   std::ifstream stream(kProcDirectory + kVersionFilename);
   if (stream.is_open()) {
     std::getline(stream, line);
     std::istringstream linestream(line);
-    linestream >> os >> kernel;
+    linestream >> os >> version >> kernel;
   }
   return kernel;
 }
@@ -66,8 +67,25 @@ vector<int> LinuxParser::Pids() {
   return pids;
 }
 
-// TODO: Read and return the system memory utilization
-float LinuxParser::MemoryUtilization() { return 0.0; }
+// DONE: Read and return the system memory utilization
+float LinuxParser::MemoryUtilization() {   
+  string line;
+  string memName;
+  long memTotal, memFree, buffers;
+  std::ifstream stream(kProcDirectory + kMeminfoFilename);
+  if (stream.is_open()) {
+    for (int i = 0; i < 4; i++){
+      std::getline(stream, line);
+      std::istringstream linestream(line);
+      linestream >> memName; 
+      if (memName == "MemTotal:") linestream >> memTotal; 
+      else if (memName =="MemFree:") linestream >> memFree; 
+      else if (memName == "Buffers:") linestream >> buffers; 
+    }
+  }
+  return  1.0 - (float)memFree/(memTotal-buffers); 
+  
+}
 
 // TODO: Read and return the system uptime
 long LinuxParser::UpTime() { return 0; }
@@ -85,8 +103,23 @@ long LinuxParser::ActiveJiffies() { return 0; }
 // TODO: Read and return the number of idle jiffies for the system
 long LinuxParser::IdleJiffies() { return 0; }
 
-// TODO: Read and return CPU utilization
-vector<string> LinuxParser::CpuUtilization() { return {}; }
+// Done: Read and return CPU utilization
+vector<string> LinuxParser::CpuUtilization() { 
+  string line;
+  string cpu_;
+  vector<string> cpuUtilList;
+  std::ifstream stream(kProcDirectory + kStatFilename);
+  if (stream.is_open()){
+    while(std::getline(stream, line)){
+      std::istringstream linestream(line);
+      linestream >> cpu_;
+      if (cpu_.substr(0,3) == "cpu")
+        cpuUtilList.push_back(line);
+      else break;
+    }
+  } 
+  return cpuUtilList; 
+}
 
 // TODO: Read and return the total number of processes
 int LinuxParser::TotalProcesses() { return 0; }
