@@ -112,7 +112,6 @@ long LinuxParser::ActiveJiffies(int pid) {
   if (stream.is_open()) {
     std::getline(stream, line);
     std::istringstream linestream(line);
-    linestream >>value;
     for(int i=1; i<=startTimeIndex ; i++){
       switch (i)
       {
@@ -233,8 +232,7 @@ long LinuxParser::UpTime(int pid) {
   if (stream.is_open()) {
     std::getline(stream, line);
     std::istringstream linestream(line);
-    linestream >>value;
-    for(int i = 1; i <= startTimeIndex ; ++i)
+    for(int i = 0; i < startTimeIndex ; ++i)
       linestream >> value;
   }    
   return (std::stol(value))/sysconf(_SC_CLK_TCK);

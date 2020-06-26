@@ -15,7 +15,7 @@ class Process {
             this->user_ = LinuxParser::User(pid);            
             this->command_ = LinuxParser::Command(pid);
             this->ram_ = LinuxParser::Ram(pid);
-            this->upTime_ = LinuxParser::UpTime(pid);
+            this->startTime_ = LinuxParser::UpTime(pid);
         }
         int Pid();                               // TODO: See src/process.cpp
         std::string User();                      // TODO: See src/process.cpp
@@ -27,7 +27,7 @@ class Process {
 
     private:
         int pid_;
-        long int upTime_;
+        long int startTime_;
         std::string user_, command_, ram_;
 };
 

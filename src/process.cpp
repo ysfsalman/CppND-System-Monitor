@@ -36,7 +36,7 @@ string Process::User() { return this->user_; }
 
 // Return the age of this process (in seconds)
 long int Process::UpTime() { 
-    return LinuxParser::UpTime() - this->upTime_ ; 
+  return LinuxParser::UpTime() - this->startTime_ ; 
 }
 
 // Overload the "less than" comparison operator for Process objects
