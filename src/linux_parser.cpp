@@ -11,26 +11,6 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-template <typename T>
-T ParseLine(string ID, string streamDir){
-  string line;
-  string lineId;
-  T lineValue;
-  std::ifstream stream(streamDir);
-  if (stream.is_open()){
-    while(std::getline(stream, line)){
-      std::istringstream linestream(line);
-      linestream >> lineId;
-      if (lineId == ID){
-        linestream >> lineValue;
-        break;
-        }      
-    }
-  } 
-  return lineValue;
-}
-
-
 // Read and return OS name
 string LinuxParser::OperatingSystem() {
   string line;
@@ -122,9 +102,31 @@ long LinuxParser::UpTime() {
 // TODO: Read and return the number of jiffies for the system
 long LinuxParser::Jiffies() { return 0; }
 
-// TODO: Read and return the number of active jiffies for a PID
-// REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::ActiveJiffies(int pid[[maybe_unused]]) { return 0; }
+// Read and return the number of active jiffies for a PID
+long LinuxParser::ActiveJiffies(int pid) { 
+  string value, utime, stime, cutime, cstime;
+  string line;
+  int startTimeIndex = 22;
+  std::ifstream stream(kProcDirectory + to_string(pid)
+                       + kStatFilename);
+  if (stream.is_open()) {
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    linestream >>value;
+    for(int i=1; i<=startTimeIndex ; i++){
+      switch (i)
+      {
+      case 14 : linestream >> utime; break;
+      case 15 : linestream >> stime; break;
+      case 16 : linestream >> cstime; break;
+      case 17 : linestream >> cutime; break;
+      default: linestream >> value; break;
+      }    
+    }
+  }
+  //return 0;    
+  return std::stol(utime)+std::stol(stime)+std::stol(cutime)+std::stol(cstime); 
+}
 
 // TODO: Read and return the number of active jiffies for the system
 long LinuxParser::ActiveJiffies() { return 0; }
@@ -148,6 +150,26 @@ vector<string> LinuxParser::CpuUtilization() {
     }
   } 
   return cpuUtilList; 
+}
+
+
+template <typename T>
+T ParseLine(string ID, string streamDir){
+  string line;
+  string lineId;
+  T lineValue;
+  std::ifstream stream(streamDir);
+  if (stream.is_open()){
+    while(std::getline(stream, line)){
+      std::istringstream linestream(line);
+      linestream >> lineId;
+      if (lineId == ID){
+        linestream >> lineValue;
+        break;
+        }      
+    }
+  } 
+  return lineValue;
 }
 
 // Read and return the total number of processes
@@ -212,7 +234,7 @@ long LinuxParser::UpTime(int pid) {
     std::getline(stream, line);
     std::istringstream linestream(line);
     linestream >>value;
-    for(int i=0; i<startTimeIndex ; i++)
+    for(int i = 1; i <= startTimeIndex ; ++i)
       linestream >> value;
   }    
   return (std::stol(value))/sysconf(_SC_CLK_TCK);
