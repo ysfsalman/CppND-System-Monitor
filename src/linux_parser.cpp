@@ -54,7 +54,7 @@ string LinuxParser::OperatingSystem() {
   return value;
 }
 
-// DONE: An example of how to read data from the filesystem
+// An example of how to read data from the filesystem
 string LinuxParser::Kernel() {
   string os, version, kernel;
   string line;
@@ -160,7 +160,7 @@ int LinuxParser::RunningProcesses() {
   return ParseLine<int>("procs_running", (kProcDirectory + kStatFilename)); 
 }
 
-// Done: Read and return the command associated with a process
+// Read and return the command associated with a process
 string LinuxParser::Command(int pid) { 
   string line, i = to_string(pid);
   std::ifstream stream(kProcDirectory + 
@@ -171,25 +171,20 @@ string LinuxParser::Command(int pid) {
   return line;
 }
 
-// Done : Read and return the memory used by a process
-string LinuxParser::Ram(int pid) {
-  //long i = ParseLine<long>("VmSize:", kProcDirectory + 
-  //                    to_string(pid) + kStatusFilename);
-  //return to_string((float)i/1000);
-  return ParseLine<string>("VmSize:", kProcDirectory + 
-                      to_string(pid) + kStatusFilename);   
+// Read and return the memory used by a process
+string LinuxParser::Ram(int pid) {  
+  long i = ParseLine<long>("VmSize:", kProcDirectory + 
+                      to_string(pid) + kStatusFilename);
+  return to_string((float)i/1000);   
 }
 
-// Done: Read and return the user ID associated with a process
+// Read and return the user ID associated with a process
 string LinuxParser::Uid(int pid) {
-  /*long i = ParseLine<long>("Uid:", kProcDirectory + 
-                      to_string(pid) + kStatusFilename);   
-  return  to_string(i);*/
   return ParseLine<string>("Uid:", kProcDirectory + 
                       to_string(pid) + kStatusFilename);  
 }
 
-// Done: Read and return the user associated with a process
+// Read and return the user associated with a process
 string LinuxParser::User(int pid) {  
   string line;
   string char_;   
@@ -206,6 +201,17 @@ string LinuxParser::User(int pid) {
   return username;
 }
 
-// TODO: Read and return the uptime of a process
-// REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::UpTime(int pid[[maybe_unused]]) { return 0; }
+// Read and return the uptime of a process
+long LinuxParser::UpTime(int pid) { 
+  vector<string> stat_(22, string());
+  string line;
+  std::ifstream stream(kProcDirectory + to_string(pid)
+                       + kStatFilename);
+  if (stream.is_open()) {
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    for(int i; i<22 ; i++)
+      linestream >> stat_[i];
+  }
+  return stoi(stat_[21]); 
+}

@@ -13,7 +13,8 @@ class Process {
         Process(int pid){
             this->pid_= pid;            
             this->user_ = LinuxParser::User(pid);            
-            this->command_ = LinuxParser::Command(pid_);
+            this->command_ = LinuxParser::Command(pid);
+            this->ram_ = LinuxParser::Ram(pid);
         }
         int Pid();                               // TODO: See src/process.cpp
         std::string User();                      // TODO: See src/process.cpp
@@ -23,10 +24,9 @@ class Process {
         long int UpTime();                       // TODO: See src/process.cpp
         bool operator<(Process const& a) const;  // TODO: See src/process.cpp
 
-  // TODO: Declare any necessary private members
     private:
         int pid_;
-        std::string user_, command_;
+        std::string user_, command_, ram_;
 };
 
 #endif
