@@ -17,14 +17,16 @@ class Process {
             this->ram_ = LinuxParser::Ram(pid);
             this->startTime_ = LinuxParser::UpTime(pid);
         }
-        int Pid();                               // TODO: See src/process.cpp
-        std::string User();                      // TODO: See src/process.cpp
-        std::string Command();                   // TODO: See src/process.cpp
-        float CpuUtilization();                  // TODO: See src/process.cpp
-        std::string Ram();                       // TODO: See src/process.cpp
-        long int UpTime();                       // TODO: See src/process.cpp
-        bool operator<(Process const& a) const;  // TODO: See src/process.cpp
+        int Pid();                               
+        std::string User();                      
+        std::string Command();                   
+        float CpuUtilization();                  
+        std::string Ram();                       
+        long int UpTime();                       
+        bool operator<(Process const& a) const;  
 
+    protected:        
+        float cpuUtil_ = 0.0f;
     private:
         int pid_;
         long int startTime_;
