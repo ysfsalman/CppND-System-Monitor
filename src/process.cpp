@@ -18,8 +18,9 @@ int Process::Pid() { return this->pid_; }
 
 // Return this process's CPU utilization
 float Process::CpuUtilization() { 
-    return (float) (LinuxParser::ActiveJiffies(this->pid_)
+    this->cpuUtil_ =  (float) (LinuxParser::ActiveJiffies(this->pid_)
                         /sysconf(_SC_CLK_TCK)) / Process::UpTime();
+    return this->cpuUtil_;
 }
 
 // Return the command that generated this process
@@ -41,5 +42,5 @@ long int Process::UpTime() {
 
 // Overload the "less than" comparison operator for Process objects
 bool Process::operator<(Process const& a) const { 
-    return (this->ram_ < a.ram_) ? true : false;
+    return this->cpuUtil_ < a.cpuUtil_ ;
 }

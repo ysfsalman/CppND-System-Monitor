@@ -34,7 +34,7 @@ string LinuxParser::OperatingSystem() {
   return value;
 }
 
-// An example of how to read data from the filesystem
+// Read Kernel
 string LinuxParser::Kernel() {
   string os, version, kernel;
   string line;
@@ -47,7 +47,7 @@ string LinuxParser::Kernel() {
   return kernel;
 }
 
-// BONUS: Update this to use std::filesystem
+// List all PIDs
 vector<int> LinuxParser::Pids() {
   vector<int> pids;
   DIR* directory = opendir(kProcDirectory.c_str());
@@ -122,15 +122,14 @@ long LinuxParser::ActiveJiffies(int pid) {
       default: linestream >> value; break;
       }    
     }
-  }
-  //return 0;    
+  }   
   return std::stol(utime)+std::stol(stime)+std::stol(cutime)+std::stol(cstime); 
 }
 
-// TODO: Read and return the number of active jiffies for the system
+// IGNORE: Read and return the number of active jiffies for the system
 long LinuxParser::ActiveJiffies() { return 0; }
 
-// TODO: Read and return the number of idle jiffies for the system
+// IGNORE: Read and return the number of idle jiffies for the system
 long LinuxParser::IdleJiffies() { return 0; }
 
 // Read and return CPU utilization
@@ -194,9 +193,10 @@ string LinuxParser::Command(int pid) {
 
 // Read and return the memory used by a process
 string LinuxParser::Ram(int pid) {  
+  ///float i = 0.0f;
   long i = ParseLine<long>("VmSize:", kProcDirectory + 
-                      to_string(pid) + kStatusFilename);  
-  return to_string(i/1000);   
+                      to_string(pid) + kStatusFilename)/1000; 
+  return to_string(i);   
 }
 
 // Read and return the user ID associated with a process
